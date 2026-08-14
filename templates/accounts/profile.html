@@ -120,11 +120,13 @@
         
         <!-- Chap ustun: Rasm, Ma'lumotlar va Tugmalar -->
         <div class="profile-sidebar">
-            
-            <!-- Profil rasmi (Avatar) - Har doim default yoki yuklangan rasm chiqadi -->
-            <!-- Profil rasmi (Avatar) -->
-<div class="profile-img-box">
-    <img src="{{ request.user.avatar.url }}" alt="Avatar">
+ <div class="profile-img-box">
+    {% if user.avatar %}
+        <img src="{{ user.avatar.url }}" alt="Avatar">
+    {% else %}
+        <!-- Agar default rasm ishlamasa yoki bo'sh bo'lsa ko'rsatiladigan zaxira rasm -->
+        <img src="/media/avatars/default.png" alt="Default Avatar">
+    {% endif %}
 </div>
 
             <!-- Userning barcha ma'lumotlari -->
@@ -145,7 +147,7 @@
                 <!-- Social Links -->
                 <p><strong>Social:</strong> 
                     {% if request.user.social_links %}
-                        <a href="{{ request.user.social_links }}" target="_blank">Link</a>
+                        <a href="{{ request.user.social_links }}" target="_blank">{{user.social_links}}</a>
                     {% else %}
                         <span style="color: gray;">kiritilmagan</span>
                     {% endif %}
@@ -154,7 +156,7 @@
                 <!-- Websites -->
                 <p><strong>Website:</strong> 
                     {% if request.user.websites %}
-                        <a href="{{ request.user.websites }}" target="_blank">Site</a>
+                        <a href="{{ request.user.websites }}" target="_blank">{{user.websites}}</a>
                     {% else %}
                         <span style="color: gray;">kiritilmagan</span>
                     {% endif %}

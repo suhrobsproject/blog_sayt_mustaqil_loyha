@@ -21,7 +21,7 @@ class RegisterView(View):
 
         if form.is_valid():
             form.save()
-            return redirect('login')
+            return redirect('accounts:login')
 
         return render(request, 'accounts/register.html', context={'form': form})
 
@@ -66,6 +66,8 @@ class ProfileView(View):
         }
         return render(request, 'accounts/profile.html', context)
 
+
+    
 class ProfileUpdateView(View):
 
     def get(self, request):
@@ -73,14 +75,15 @@ class ProfileUpdateView(View):
         return render(request, 'accounts/profile_update.html', {'form': form})
 
     def post(self, request):
-
+        # request.FILES albatta yozilgan, bu to'g'ri
         form = ProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('profile')  
+            # Namespace bilan birga to'g'ri nomni yozamiz:
+            return redirect('accounts:profile')  
+        
+        # Agar forma yaroqsiz bo'lsa, xatoliklar bilan birga sahifani qaytaramiz
         return render(request, 'accounts/profile_update.html', {'form': form})
-
-
 
 
 

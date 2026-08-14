@@ -1,6 +1,7 @@
 from django import forms
 from .models import CustomUser
 from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
 
 
 class CustomUserForm(forms.ModelForm):
@@ -62,19 +63,51 @@ class LoginForm(forms.Form):
         label="Parol"
     )
 
-
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        # Faqat ruxsat etilgan maydonlarni yozamiz:
+        fields = ['avatar', 'first_name', 'last_name', 'username', 'email', 'bio', 'social_links', 'websites']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': 'FIRST NAME', 'class': 'box'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'LAST NAME', 'class': 'box'}),
+            'username': forms.TextInput(attrs={'placeholder': 'USERNAME', 'class': 'box'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'EMAIL', 'class': 'box'}),
+            'bio': forms.TextInput(attrs={'placeholder': 'BIO', 'class': 'box'}),
+            'social_links': forms.URLInput(attrs={'placeholder': 'https://t.me/username', 'class': 'box'}),
+            'websites': forms.URLInput(attrs={'placeholder': 'https://example.com', 'class': 'box'}),
+        }
 
 class ProfileForm(forms.ModelForm):
 
     class Meta:
-
         model = CustomUser
-        fields = '__all__'
+        fields = ['avatar', 'first_name', 'last_name', 'username', 'email', 'bio', 'social_links', 'websites']
+        widgets = {
+            'first_name': forms.TextInput(attrs={'placeholder': 'FIRST NAME', 'class': 'box'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'LAST NAME', 'class': 'box'}),
+            'username': forms.TextInput(attrs={'placeholder': 'USERNAME', 'class': 'box'}),
+            'email': forms.EmailInput(attrs={'placeholder': 'EMAIL', 'class': 'box'}),
+            'bio': forms.TextInput(attrs={'placeholder': 'BIO', 'class': 'box'}),
+            'social_links': forms.TextInput(attrs={'placeholder': 't.me/username yoki https://t.me/...', 'class': 'box'}), # URLInput o'rniga TextInput qildik
+            'websites': forms.TextInput(attrs={'placeholder': 'kun.uz yoki https://kun.uz', 'class': 'box'}),
+        }
+
+    def clean_social_links(self):
+        url = self.cleaned_data.get('social_links')
+        if url and not url.startswith(('http://', 'https://')):
+            url = 'https://' + url
+        return url
+
+    def clean_websites(self):
+        url = self.cleaned_data.get('websites')
+        if url and not url.startswith(('http://', 'https://')):
+            url = 'https://' + url
+        return url
 
 
 
-from django import forms
-from django.contrib.auth.password_validation import validate_password
+
 
 class CustomPasswordChangeForm(forms.Form):
     old_password = forms.CharField(

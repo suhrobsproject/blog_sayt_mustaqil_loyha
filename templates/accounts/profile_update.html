@@ -19,7 +19,7 @@
             padding: 0;
         }
 
-        /* Chegaralar (Struktura ko'rinishi uchun) */
+        /* Chegaralar */
         .box {
             border: 1px solid #000;
             padding: 10px;
@@ -33,26 +33,50 @@
             justify-content: center;
             align-items: center;
             margin-top: 30px;
+            margin-bottom: 50px;
         }
 
         .update-box {
-            width: 450px;
+            width: 500px;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            text-align: center;
             border: 1px solid #000;
             padding: 30px;
             background-color: #f9f9f9;
         }
 
-        /* Input va tugmalar sig'imi */
-        .update-box input, 
+        /* Har bir input guruhi uchun (Label chapda, input o'ngda) */
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .form-group label {
+            width: 35%;
+            text-align: left;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .form-group input, 
+        .form-group select,
+        .form-group textarea {
+            width: 62%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Tugma uchun */
         .update-box button {
             width: 100%;
             padding: 12px;
             box-sizing: border-box;
-            text-align: center;
+            cursor: pointer;
+            background-color: #ddd;
+            border: 1px solid #000;
         }
     </style>
 </head>
@@ -71,7 +95,7 @@
         <!-- 2. Navigatsiya menyusi -->
         <nav>
             <ul class="nav-menu">
-                <li class="box" style="flex: 1;"><a href="/">HOME</a></li>
+                <li class="box" style="flex: 1;"><a href="{% url 'accounts:home' %}">HOME</a></li>
                 <li class="box" style="flex: 1;"><a href="/articles/">MAQOLALAR</a></li>
                 <li class="box" style="flex: 1;"><a href="/article/create/">MAQOLA YOZISH</a></li>
                 <li class="box" style="flex: 1;"><a href="/contact/">CONTACT US</a></li>
@@ -83,52 +107,104 @@
     <main class="update-wrapper">
         <div class="update-box">
             
-            <h2 style="margin: 0;">EDIT PROFILE</h2>
+            <h2 style="margin: 0; text-align: center;">EDIT PROFILE</h2>
 
             <!-- Rasm ham yuklash uchun enctype shart -->
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
 
-                <!-- Umumiy xatoliklar -->
-                {{ form.non_field_errors }}
+                <!-- Xatoliklar -->
+                {% if form.errors %}
+                    <div style="color: red; text-align: left; font-size: 13px; margin-bottom: 15px;">
+                        {{ form.errors }}
+                    </div>
+                {% endif %}
+
+                <!-- RASM -->
+               <!-- RASM -->
+                <!-- RASM -->
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Profil rasmi:</label>
+                    <div style="width: 62%; text-align: left;">
+                        
+                        <!-- Yuqoridagi dumaloq rasm -->
+                        {% if request.user.avatar %}
+                            <div style="margin-bottom: 8px;">
+                                <img src="{{ request.user.avatar.url }}" alt="Avatar" width="60" height="60" style="object-fit: cover; border-radius: 50%; border: 1px solid #ccc;">
+                            </div>
+                        {% endif %}
+
+                        <!-- "Currently" va "Change" yozuvlarini CSS yordamida butunlay yashirish -->
+                        <style>
+                            .avatar-field {
+                                font-size: 0; /* Ichidagi ortiqcha matnlarni ko'rinmas qiladi */
+                            }
+                            .avatar-field input[type="file"] {
+                                font-size: 14px; /* Faqat Choose file tugmasining yozuvini qaytarib tiklaydi */
+                            }
+                            .avatar-field br, 
+                            .avatar-field input[type="checkbox"], 
+                            .avatar-field label {
+                                display: none !important;
+                            }
+                        </style>
+
+                        <div class="avatar-field">
+                            {{ form.avatar }}
+                        </div>
+                    </div>
+                </div>
 
                 <!-- FIRST NAME -->
-                <div style="margin-bottom: 15px;">
-                    {{ form.first_name.errors }}
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Ism:</label>
                     {{ form.first_name }}
                 </div>
 
                 <!-- LAST NAME -->
-                <div style="margin-bottom: 15px;">
-                    {{ form.last_name.errors }}
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Familiya:</label>
                     {{ form.last_name }}
                 </div>
 
                 <!-- USERNAME -->
-                <div style="margin-bottom: 15px;">
-                    {{ form.username.errors }}
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Username:</label>
                     {{ form.username }}
                 </div>
 
                 <!-- EMAIL -->
-                <div style="margin-bottom: 15px;">
-                    {{ form.email.errors }}
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Email:</label>
                     {{ form.email }}
                 </div>
 
-                <!-- RASM (Agar modelda ImageField bo'lsa) -->
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <label>Profil rasmi:</label>
-                    {{ form.image.errors }}
-                    {{ form.image }}
+                <!-- BIO -->
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Bio:</label>
+                    {{ form.bio }}
+                </div>
+
+                <!-- SOCIAL LINKS -->
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Social Link:</label>
+                    {{ form.social_links }}
+                </div>
+
+                <!-- WEBSITES -->
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Website:</label>
+                    {{ form.websites }}
                 </div>
 
                 <!-- SAQLASH TUGMASI -->
-                <button type="submit" class="box" style="cursor: pointer; background-color: #ddd;">SAVE CHANGES</button>
+                <button type="submit" class="box" style="margin-top: 10px;">SAVE CHANGES</button>
             </form>
 
             <br>
-            <a href="{% url 'accounts:profile' %}">Orqaga qaytish</a>
+            <div style="text-align: center;">
+                <a href="{% url 'accounts:profile' %}">Orqaga qaytish</a>
+            </div>
 
         </div>
     </main>
