@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>BLOG-SITE</title>
+    <style>
+        /* 1. Tepadagi sarlavha va tugmalar joylashuvi */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 2. Menyu tugmalarini yonma-yon qilish */
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        /* 3. Asosiy blokni 3 ta ustunga bo'lish (Chap, O'rta, O'ng) */
+        .main-container {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        /* Chap va o'ng panellar kengligi */
+        .sidebar-left, .sidebar-right {
+            width: 20%;
+        }
+
+        /* O'rtadagi maqolalar qismi */
+        .content-center {
+            width: 60%;
+        }
+
+        /* 4. Maqolalarni 3x3 katak (Grid) shakliga keltirish */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        /* Ro'yxat nuqtalarini olib tashlash */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Ko'rinishi uchun minimal chegara (border)lar */
+        .box {
+            border: 1px solid #000;
+            padding: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Yuqori qism (Header) -->
+    <header>
+       <div class="top-bar">
+    <h1>BLOG-SITE</h1>
+    <div>
+        <!-- Agar foydalanuvchi tizimga kirgan bo'lsa -->
+        {% if request.user.is_authenticated %}
+            <!-- Profilga o'tish linki bilan birga username chiqib turadi -->
+            <a href="{% url 'accounts:profile' %}" style="margin-right: 15px; font-weight: bold;">
+                @{{ request.user.username }}
+            </a>
+            <!-- Xohlasangiz yoniga logout ham qo'shishingiz mumkin -->
+            <a href="{% url 'accounts:logout' %}">Logout</a>
+            
+        <!-- Agar foydalanuvchi tizimga kirmagan (mehmon) bo'lsa -->
+        {% else %}
+            <a href="{% url 'accounts:login' %}">Sign in</a>
+            <a href="{% url 'accounts:register' %}">Sign up</a>
+        {% endif %}
+    </div>
+</div>
+        <!-- 2. Navigatsiya menyusi -->
+        <nav>
+            <ul class="nav-menu">
+                <li class="box"><a href="/">HOME</a></li>
+                <li class="box"><a href="/articles/">MAQOLALAR</a></li>
+                <li class="box"><a href="/article/create/">MAQOLA YOZISH</a></li>
+                <li class="box"><a href="/contact/">CONTACT US</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <hr>
+
+    <!-- 3. Asosiy mazmun (3 ta ustunli tuzilma) -->
+    <main class="main-container">
+        
+        <!-- Chap tarafdagi Kategoriyalar paneli -->
+        <aside class="sidebar-left">
+            <h3>Kategoriyalar</h3>
+            <ul>
+                <li class="box"><a href="/category/1/">kategoriya</a></li>
+                <li class="box"><a href="/category/2/">kategoriya</a></li>
+                <li class="box"><a href="/category/3/">kategoriya</a></li>
+                <li class="box"><a href="/category/4/">kategoriya</a></li>
+                <li class="box"><a href="/category/5/">kategoriya</a></li>
+                <li class="box"><a href="/category/6/">kategoriya</a></li>
+            </ul>
+        </aside>
+
+        <!-- O'rtadagi Maqolalar tarmog'i (3x3 katak) -->
+        <section class="content-center">
+            <h3>Maqolalar</h3>
+            <div class="articles-grid">
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+                <article class="box">maqola</article>
+            </div>
+        </section>
+
+        <!-- O'ng tarafdagi Ko'p o'qilganlar paneli -->
+        <aside class="sidebar-right">
+            <h3>Mashhur maqolalar</h3>
+            <ul>
+                <li class="box"><a href="/article/1/">Ko'p o'qilganlar</a></li>
+                <li class="box"><a href="/article/2/">Ko'p o'qilganlar</a></li>
+                <li class="box"><a href="/article/3/">Ko'p o'qilganlar</a></li>
+                <li class="box"><a href="/article/4/">Ko'p o'qilganlar</a></li>
+                <li class="box"><a href="/article/5/">Ko'p o'qilganlar</a></li>
+            </ul>
+        </aside>
+
+    </main>
+
+</body>
+</html>

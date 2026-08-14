@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>BLOG-SITE - Register</title>
+    <style>
+        /* 1. Yuqori qism (Header) joylashuvi */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Navigatsiya menyusi */
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        /* 2. Register formasini o'rtaga (markazga) tekislash */
+        .register-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .register-box {
+            width: 450px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            text-align: center;
+        }
+
+        /* Input va tugmalar sig'imi */
+        .register-box input, 
+        .register-box button {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Chegaralar (Struktura ko'rinishi uchun) */
+        .box {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Yuqori qism (Header) -->
+    <header>
+        <div class="top-bar">
+            <h1>BLOG-SITE</h1>
+            <div>
+               <a href="{% url 'accounts:login' %}">Sign in</a>
+                <a href="{% url 'accounts:register' %}">Sign up</a>
+            </div>
+        </div>
+
+        <!-- 2. Navigatsiya menyusi -->
+        <nav>
+            <ul class="nav-menu">
+                <li class="box"><a href="/">HOME</a></li>
+                <li class="box"><a href="/articles/">MAQOLALAR</a></li>
+                <li class="box"><a href="/article/create/">MAQOLA YOZISH</a></li>
+                <li class="box"><a href="/contact/">CONTACT US</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <hr>
+
+    <!-- 3. Markazdagi Register forma bloki -->
+    <main class="register-wrapper">
+        <div class="register-box">
+            
+            <h2 class="box" style="margin: 0;">REGISTER</h2>
+
+          <form method="post">
+    {% csrf_token %} <!-- 1. Buni unutmaslik kerak! -->
+
+    <!-- Butun formaning umumiy xatoliklari (masalan: parollar mos kelmasa) -->
+    {{ form.non_field_errors }}
+
+    <!-- FIRST NAME -->
+    <div style="margin-bottom: 10px;">
+        {{ form.first_name.errors }}
+        {{ form.first_name }}
+    </div>
+
+    <!-- LAST NAME -->
+    <div style="margin-bottom: 10px;">
+        {{ form.last_name.errors }}
+        {{ form.last_name }}
+    </div>
+
+    <!-- EMAIL -->
+    <div style="margin-bottom: 10px;">
+        {{ form.email.errors }}
+        {{ form.email }}
+    </div>
+
+    <!-- USERNAME -->
+    <div style="margin-bottom: 15px;">
+        {{ form.username.errors }}
+        {{ form.username }}
+    </div>
+
+    <!-- PASSWORD -->
+    <div style="margin-bottom: 10px;">
+        {{ form.password.errors }}
+        {{ form.password }}
+    </div>
+
+    <!-- CONFIRM PASSWORD -->
+    <div style="margin-bottom: 15px;">
+        {{ form.confirm_password.errors }}
+        {{ form.confirm_password }}
+    </div>
+
+    <!-- SAVE TUGMASI -->
+    <button type="submit" class="box" style="cursor: pointer;">SAVE</button>
+</form>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>BLOG-SITE - Profile</title>
+    <style>
+        /* 1. Yuqori qism (Header) joylashuvi */
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Navigatsiya menyusi */
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+            list-style: none;
+            padding: 0;
+        }
+
+        /* Chegaralar (Struktura ko'rinishi uchun) */
+        .box {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Profil sahifasining asosiy qismi (Ikki ustunlik maket) */
+        .profile-container {
+            display: flex;
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        /* Chap tomon: Profil va tugmalar */
+        .profile-sidebar {
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Profil rasmi uchun doira/blok */
+        .profile-img-box {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 1px solid #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            overflow: hidden; /* Rasmni doiradan tashqariga chiqarmaslik uchun */
+        }
+
+        .profile-img-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Userning barcha ma'lumotlari bloki */
+        .profile-info-box {
+            border: 1px solid #000;
+            padding: 20px;
+            min-height: 120px;
+            background-color: #f9f9f9;
+            word-break: break-word;
+        }
+
+        /* O'ng tomon: User yozgan maqolalar */
+        .articles-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .article-card {
+            border: 1px solid #000;
+            padding: 25px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Yuqori qism (Header) -->
+    <header>
+        <div class="top-bar">
+            <h1>BLOG-SITE</h1>
+            <div>
+                {% if request.user.is_authenticated %}
+                    <a href="{% url 'accounts:profile' %}" style="margin-right: 15px; font-weight: bold;">
+                        @{{ request.user.username }}
+                    </a>
+                    <a href="{% url 'accounts:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}">Sign in</a>
+                    <a href="{% url 'accounts:register' %}">Sign up</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 2. Navigatsiya menyusi -->
+        <nav>
+            <ul class="nav-menu">
+                <li class="box" style="flex: 1;"><a href="{% url 'accounts:home' %}">HOME</a></li>
+                <li class="box" style="flex: 1;"><a href="/articles/">MAQOLALAR</a></li>
+                <li class="box" style="flex: 1;"><a href="/article/create/">MAQOLA YOZISH</a></li>
+                <li class="box" style="flex: 1;"><a href="/contact/">CONTACT US</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- 3. Profil va Maqolalar qismi -->
+    <main class="profile-container">
+        
+        <!-- Chap ustun: Rasm, Ma'lumotlar va Tugmalar -->
+        <div class="profile-sidebar">
+            
+            <!-- Profil rasmi (Avatar) - Har doim default yoki yuklangan rasm chiqadi -->
+            <!-- Profil rasmi (Avatar) -->
+<div class="profile-img-box">
+    <img src="{{ request.user.avatar.url }}" alt="Avatar">
+</div>
+
+            <!-- Userning barcha ma'lumotlari -->
+            <div class="profile-info-box">
+                <p><strong>Ism:</strong> {{ request.user.first_name }} {{ request.user.last_name }}</p>
+                <p><strong>Username:</strong> @{{ request.user.username }}</p>
+                <p><strong>Email:</strong> {{ request.user.email }}</p>
+                
+                <!-- Bio -->
+                <p><strong>Bio:</strong> 
+                    {% if request.user.bio %}
+                        {{ request.user.bio }}
+                    {% else %}
+                        <span style="color: gray;">kiritilmagan</span>
+                    {% endif %}
+                </p>
+
+                <!-- Social Links -->
+                <p><strong>Social:</strong> 
+                    {% if request.user.social_links %}
+                        <a href="{{ request.user.social_links }}" target="_blank">Link</a>
+                    {% else %}
+                        <span style="color: gray;">kiritilmagan</span>
+                    {% endif %}
+                </p>
+
+                <!-- Websites -->
+                <p><strong>Website:</strong> 
+                    {% if request.user.websites %}
+                        <a href="{{ request.user.websites }}" target="_blank">Site</a>
+                    {% else %}
+                        <span style="color: gray;">kiritilmagan</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Tugmalar -->
+            <a href="{% url 'accounts:profile_update' %}" class="box" style="text-decoration: none; color: black; display: block;">Edit profile</a>
+            <a href="{% url 'accounts:password_change' %}" class="box" style="text-decoration: none; color: black; display: block;">Password change</a>
+            <a href="{% url 'accounts:logout' %}" class="box" style="text-decoration: none; color: black; display: block;">logout</a>
+
+        </div>
+
+        <!-- O'ng ustun: User o'zi yozgan maqolalar -->
+        <div class="articles-container">
+            
+            {% for article in user.articles.all %}
+                <div class="article-card">
+                    <h3>{{ article.title }}</h3>
+                    <p>{{ article.content|truncatewords:20 }}</p>
+                </div>
+            {% empty %}
+                <div class="article-card">
+                    User o'zi yozgan maqolalar
+                </div>
+                <div class="article-card">
+                    User o'zi yozgan maqolalar
+                </div>
+                <div class="article-card">
+                    User o'zi yozgan maqolalar
+                </div>
+            {% endfor %}
+
+        </div>
+
+    </main>
+
+</body>
+</html>
