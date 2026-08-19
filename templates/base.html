@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="uz" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}DevHub - Dasturchilar Blogi{% endblock %}</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --accent-cyan: #06b6d4;
+            --terminal-bg: #090d16;
+        }
+
+        [data-bs-theme="dark"] {
+            --bg-body: #0b0f19;
+            --card-bg: #111827;
+            --border-color: #1f293d;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --input-bg: #1a2234;
+            --hero-gradient: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
+        }
+
+        [data-bs-theme="light"] {
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #ffffff;
+            --hero-gradient: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .font-mono {
+            font-family: var(--font-code);
+        }
+
+        /* Navbar */
+        .navbar-custom {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+        }
+        .brand-logo {
+            font-family: var(--font-code);
+            font-weight: 800;
+            font-size: 1.35rem;
+            color: var(--primary) !important;
+            letter-spacing: -0.5px;
+        }
+        .nav-link {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-muted) !important;
+            padding: 0.5rem 0.9rem !important;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary) !important;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Qidiruv Paneli (Menyu tagidagi chiroyli IT bar) */
+        .search-bar-wrapper {
+            background: var(--hero-gradient);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 0;
+        }
+        .dev-search-input {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 12px 0 0 12px;
+            font-family: var(--font-code);
+            font-size: 0.9rem;
+        }
+        .dev-search-input:focus {
+            background-color: var(--input-bg);
+            border-color: var(--primary);
+            color: var(--text-main);
+            box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+        }
+        .dev-search-btn {
+            background-color: var(--primary);
+            color: #fff;
+            border-radius: 0 12px 12px 0;
+            border: 1px solid var(--primary);
+            font-family: var(--font-code);
+            font-weight: 600;
+            padding: 0 1.2rem;
+        }
+        .dev-search-btn:hover {
+            background-color: var(--primary-hover);
+            color: #fff;
+        }
+
+        /* Cards & Buttons */
+        .custom-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px -2px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .custom-card:hover {
+            border-color: var(--primary);
+        }
+
+        .btn-primary-custom {
+            background-color: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            border-radius: 10px;
+            padding: 0.55rem 1.3rem;
+            border: none;
+            transition: all 0.2s ease;
+        }
+        .btn-primary-custom:hover {
+            background-color: var(--primary-hover);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* IT Code Badges */
+        .tag-badge {
+            font-family: var(--font-code);
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(99, 102, 241, 0.12);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            text-decoration: none;
+            transition: 0.2s;
+        }
+        .tag-badge:hover {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .theme-toggle-btn:hover {
+            border-color: var(--primary);
+        }
+
+        footer {
+            margin-top: auto;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            padding: 1.5rem 0;
+            color: var(--text-muted);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+    <!-- 1. Header / Navbar -->
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-custom py-2">
+            <div class="container">
+                <a class="brand-logo d-flex align-items-center gap-2 text-decoration-none" href="{% url 'accounts:home' %}">
+                    <i class="bi bi-terminal-fill"></i> &lt;Blog-site &gt;
+                </a>
+
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+                    <i class="bi bi-list fs-2"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-1 font-mono">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'accounts:home' %}"><i class="bi bi-house-door me-1"></i>Bosh sahifa</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'articles:article-list' %}"><i class="bi bi-journal-code me-1"></i>Maqolalar</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link text-primary fw-bold" href="{% url 'articles:article-create' %}">
+                                <i class="bi bi-code-slash me-1"></i>Maqola yozish
+                            </a>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+                        <!-- Dark / Light Mode Switcher -->
+                        <button class="theme-toggle-btn me-1" id="themeToggler" title="Rejimni o'zgartirish">
+                            <i class="bi bi-sun-fill" id="themeIcon"></i>
+                        </button>
+
+                        {% if user.is_authenticated %}
+                            <a href="{% url 'accounts:profile' %}" class="btn btn-outline-secondary rounded-pill px-3 fw-semibold font-mono">
+                                <i class="bi bi-person-fill-gear"></i> @{{ user.username }}
+                            </a>
+                            <a href="{% url 'accounts:logout' %}" class="btn btn-danger bg-opacity-10 text-danger border-0 rounded-pill px-3">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:login' %}" class="btn btn-outline-secondary rounded-pill px-3 font-mono">Kirish</a>
+                            <a href="{% url 'accounts:register' %}" class="btn btn-primary-custom rounded-pill font-mono">Ro'yxatdan o'tish</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- 2. Menyu tagidagi maxsus Qidiruv qatori -->
+        <div class="search-bar-wrapper">
+            <div class="container">
+                <form action="{% url 'articles:article-list' %}" method="get" class="d-flex justify-content-center">
+                    <div class="input-group" style="max-width: 680px;">
+                        <span class="input-group-text bg-transparent border-end-0 border-color text-muted font-mono" style="border-radius: 12px 0 0 12px; border: 1px solid var(--border-color); background: var(--input-bg);">
+                            <i class="bi bi-search text-primary"></i>
+                        </span>
+                        <input type="text" name="q" value="{{ query|default:'' }}" class="form-control dev-search-input border-start-0 ps-0" placeholder="Maqola, mavzu, texnologiya yoki kod nomini qidiring... (masalan: Python, REST API)" aria-label="Search">
+                        <button class="btn dev-search-btn" type="submit">Qidirish</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Asosiy kontent -->
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center font-mono small">
+            <p class="mb-1">&copy; {% now "Y" %} <strong>DevHub</strong> &bull; Dasturchilar IT Hamjamiyati.</p>
+            <p class="text-muted mb-0">Designed for developers with <i class="bi bi-heart-fill text-danger"></i> & Python / Django</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Tungi / Kunduzgi rejim (Dark/Light Mode) JS kodi
+        const html = document.documentElement;
+        const toggler = document.getElementById('themeToggler');
+        const icon = document.getElementById('themeIcon');
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        setTheme(savedTheme);
+
+        toggler.addEventListener('click', () => {
+            const currentTheme = html.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            setTheme(newTheme);
+        });
+
+        function setTheme(theme) {
+            html.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', theme);
+            if (theme === 'dark') {
+                icon.className = 'bi bi-sun-fill text-warning';
+            } else {
+                icon.className = 'bi bi-moon-stars-fill text-primary';
+            }
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

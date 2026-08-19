@@ -1,93 +1,94 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .models import CustomUser
-from .forms import CustomUserForm, LoginForm, ProfileForm, CustomPasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash, logout
-
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import CustomUserForm, LoginForm, ProfileForm, CustomPasswordChangeForm
+from articles.models import Article, Category
+from .models import CustomUser
 
 
 def home(request):
-    return render(request, 'index.html')
+    categories = Category.objects.all()
+    latest_articles = Article.objects.select_related('author', 'category').order_by('-created_at')[:9]
+    popular_articles = Article.objects.order_by('-viewscount')[:5]
+    context = {
+        'categories': categories,
+        'latest_articles': latest_articles,
+        'popular_articles': popular_articles
+    }
+    return render(request, 'index.html', context)
+
 
 class RegisterView(View):
-
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('accounts:profile')
         form = CustomUserForm()
-        return render(request, 'accounts/register.html', context={'form':form})
+        return render(request, 'accounts/register.html', {'form': form})
 
     def post(self, request):
-
         form = CustomUserForm(data=request.POST, files=request.FILES)
-
         if form.is_valid():
             form.save()
             return redirect('accounts:login')
-
-        return render(request, 'accounts/register.html', context={'form': form})
+        return render(request, 'accounts/register.html', {'form': form})
 
 
 class LoginView(View):
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('accounts:profile')
         form = LoginForm()
         return render(request, 'accounts/login.html', {'form': form})
 
     def post(self, request):
-
         form = LoginForm(request.POST)
-
         if form.is_valid():
-
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-
-
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
-                login(request, user) 
-                return redirect('accounts:profile') 
+                login(request, user)
+                return redirect('accounts:profile')
             else:
-                form.add_error(None, "Username yoki parol noto'g'ri!")
+                form.add_error(None, "Foydalanuvchi nomi yoki parol notoʻgʻri!")
 
         return render(request, 'accounts/login.html', {'form': form})
 
+
 class CustomLogoutView(View):
     def get(self, request):
-        # Tizimdan chiqish (session'ni o'chirish)
         logout(request)
-        # Chiqib ketgandan keyin qayerga o'tishini yozasan (masalan, home sahifasiga)
-        return redirect('accounts:login')
+        return redirect('accounts:home')
 
-    
-class ProfileView(View):
+
+class ProfileView(LoginRequiredMixin, View):
+    login_url = 'accounts:login'
+
     def get(self, request):
-        context = {
-            'user': request.user
-        }
-        return render(request, 'accounts/profile.html', context)
+        user_articles = Article.objects.filter(author=request.user).order_by('-created_at')
+        return render(request, 'accounts/profile.html', {'user': request.user, 'user_articles': user_articles})
 
 
-    
-class ProfileUpdateView(View):
+class ProfileUpdateView(LoginRequiredMixin, View):
+    login_url = 'accounts:login'
 
     def get(self, request):
         form = ProfileForm(instance=request.user)
         return render(request, 'accounts/profile_update.html', {'form': form})
 
     def post(self, request):
-        # request.FILES albatta yozilgan, bu to'g'ri
         form = ProfileForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            # Namespace bilan birga to'g'ri nomni yozamiz:
-            return redirect('accounts:profile')  
-        
-        # Agar forma yaroqsiz bo'lsa, xatoliklar bilan birga sahifani qaytaramiz
+            return redirect('accounts:profile')
         return render(request, 'accounts/profile_update.html', {'form': form})
 
 
+class CustomPasswordChangeView(LoginRequiredMixin, View):
+    login_url = 'accounts:login'
 
-class CustomPasswordChangeView(View):
     def get(self, request):
         form = CustomPasswordChangeForm(user=request.user)
         return render(request, 'accounts/password_change.html', {'form': form})
@@ -96,14 +97,19 @@ class CustomPasswordChangeView(View):
         form = CustomPasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             new_password = form.cleaned_data.get('new_password')
-            
-            # Yangi parolni o'rnatamiz
             request.user.set_password(new_password)
             request.user.save()
-            
-            # Parol o'zgarganda user tizimdan chiqib ketmasligi uchun session'ni yangilab qo'yamiz
             update_session_auth_hash(request, request.user)
-            
-            return redirect('accounts:profile') # Profil sahifasiga qaytaramiz
-            
+            return redirect('accounts:profile')
         return render(request, 'accounts/password_change.html', {'form': form})
+
+
+
+class UserProfileDetailView(View):
+    def get(self, request, username):
+        author = get_object_or_404(CustomUser, username=username)
+        author_articles = Article.objects.filter(author=author).order_by('-created_at')
+        return render(request, 'accounts/user_profile.html', {
+            'author': author,
+            'author_articles': author_articles
+        })

@@ -1,21 +1,81 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <title>{% if article %}Maqolani tahrirlash{% else %}Yangi maqola yozish{% endif %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5" style="max-width: 700px;">
-        <a href="{% url 'article-list' %}" class="btn btn-secondary mb-3">&larr; Orqaga</a>
+{% extends 'base.html' %}
 
-        <h2 class="mb-4">{% if article %}Maqolani tahrirlash{% else %}Yangi maqola yozish{% endif %}</h2>
+{% block title %}{{ title }} - DevHub{% endblock %}
 
-        <form method="post" class="needs-validation">
+{% block content %}
+<div class="container" style="max-width: 780px;">
+    <a href="{% url 'articles:article-list' %}" class="btn btn-link text-decoration-none text-muted mb-3 p-0 font-mono">
+        <i class="bi bi-arrow-left"></i> Maqolalarga qaytish
+    </a>
+
+    <div class="custom-card p-4 p-md-5">
+        <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
+            <i class="bi bi-pencil-square fs-3 text-primary"></i>
+            <h4 class="fw-bold mb-0 font-mono">{{ title }}</h4>
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success w-100">Saqlash</button>
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger py-2 small mb-3">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <!-- Sarlavha -->
+            <div class="mb-3">
+                <label class="form-label fw-bold font-mono small">Maqola sarlavhasi</label>
+                {{ form.title }}
+                {% if form.title.errors %}<div class="text-danger small">{{ form.title.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Kategoriya va Rasm faylini yuklash -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold font-mono small">Kategoriya</label>
+                    {{ form.category }}
+                    {% if form.category.errors %}<div class="text-danger small">{{ form.category.errors }}</div>{% endif %}
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold font-mono small"><i class="bi bi-image text-primary"></i> Muqova rasmi (Faylni tanlang)</label>
+                    {{ form.image }}
+                    {% if form.image.errors %}<div class="text-danger small">{{ form.image.errors }}</div>{% endif %}
+                </div>
+            </div>
+
+            <!-- Qisqa tavsif -->
+            <div class="mb-3">
+                <label class="form-label fw-bold font-mono small">Qisqacha tavsif (Description)</label>
+                {{ form.description }}
+                {% if form.description.errors %}<div class="text-danger small">{{ form.description.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Teglar tanlash (IT Badges formatida) -->
+            <div class="mb-3">
+                <label class="form-label fw-bold font-mono small d-block"><i class="bi bi-tags text-primary"></i> Teglarni tanlang:</label>
+                <div class="d-flex flex-wrap gap-2 p-3 rounded-3" style="background: var(--input-bg); border: 1px solid var(--border-color);">
+                    {% for tag_choice in form.tags %}
+                        <div class="form-check form-check-inline m-0">
+                            {{ tag_choice.tag }}
+                            <label class="badge border py-2 px-3 font-mono cursor-pointer" for="{{ tag_choice.id_for_label }}" style="cursor: pointer;">
+                                {{ tag_choice.choice_label }}
+                            </label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if form.tags.errors %}<div class="text-danger small">{{ form.tags.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Asosiy matn -->
+            <div class="mb-4">
+                <label class="form-label fw-bold font-mono small">Maqola matni (Markdown / Kod sintaksisi qo'llab-quvvatlanadi)</label>
+                {{ form.article }}
+                {% if form.article.errors %}<div class="text-danger small">{{ form.article.errors }}</div>{% endif %}
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom w-100 py-2 font-mono">
+                <i class="bi bi-cloud-arrow-up-fill me-1"></i> Saqlash va Chop etish
+            </button>
         </form>
     </div>
-</body>
-</html>
+</div>
+{% endblock %}

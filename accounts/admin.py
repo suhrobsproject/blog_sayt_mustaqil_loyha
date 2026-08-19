@@ -7,12 +7,12 @@ from .models import CustomUser
 class CustomUserAdmin(UserAdmin):
     fieldsets = UserAdmin.fieldsets + (
         ("Qo'shimcha ma'lumotlar", {
-            'fields': ('avatar', 'bio', 'social_links', 'websites')
+            'fields': ('avatar', 'bio', 'social', 'websites')
         }),
     )
 
     add_fieldsets = UserAdmin.add_fieldsets + (
         ("Qo'shimcha ma'lumotlar", {
-            'fields': ('avatar', 'bio', 'social_links', 'websites')
+            'fields': ('avatar', 'bio', 'social', 'websites')
         }),
     )

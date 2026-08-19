@@ -1,99 +1,29 @@
-<!DOCTYPE html>
-<html lang="uz">
-<head>
-    <meta charset="UTF-8">
-    <title>BLOG-SITE - Login</title>
-    <style>
-        /* 1. Yuqori qism (Header) joylashuvi */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+<!-- templates/accounts/login.html -->
+{% extends 'base.html' %}
+{% block title %}Kirish - BLOG-SITE{% endblock %}
 
-        /* Navigatsiya menyusi */
-        .nav-menu {
-            display: flex;
-            gap: 10px;
-            list-style: none;
-            padding: 0;
-        }
-
-        /* 2. Login formasini o'rtaga (markazga) tekislash */
-        .login-wrapper {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 50px;
-        }
-
-        .login-box {
-            width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-        }
-
-        /* Input va tugmalar sig'imi */
-        .login-box input, 
-        .login-box button {
-            width: 100%;
-            padding: 12px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        /* Chegaralar (Struktura ko'rinishi uchun) */
-        .box {
-            border: 1px solid #000;
-            padding: 10px;
-            text-align: center;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- 1. Yuqori qism (Header) -->
-    <header>
-        <div class="top-bar">
-            <h1>BLOG-SITE</h1>
-            <div>
-                <a href="{% url 'accounts:login' %}">Sign in</a>
-                <a href="{% url 'accounts:register' %}">Sign up</a>
+{% block content %}
+<div class="container" style="max-width: 450px;">
+    <div class="custom-card p-4 p-md-5 mt-4">
+        <h3 class="fw-bold text-center mb-4">Tizimga kirish</h3>
+        <form method="post">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger py-2 small">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Foydalanuvchi nomi</label>
+                {{ form.username }}
             </div>
-        </div>
-
-        <!-- 2. Navigatsiya menyusi -->
-        <nav>
-            <ul class="nav-menu">
-                <li class="box"><a href="{% url 'accounts:home' %}">HOME</a></li>
-                <li class="box"><a href="/articles/">MAQOLALAR</a></li>
-                <li class="box"><a href="/article/create/">MAQOLA YOZISH</a></li>
-                <li class="box"><a href="/contact/">CONTACT US</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <hr>
-
-   <form method="post">
-    {% csrf_token %} <!-- Django'da POST forma uchun bu shart! -->
-
-    <!-- Username maydoni -->
-    <div style="margin-bottom: 15px;">
-        {{ form.username.errors }}
-        {{ form.username }}
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Parol</label>
+                {{ form.password }}
+            </div>
+            <button type="submit" class="btn btn-primary-custom w-100 py-2">Kirish</button>
+        </form>
+        <p class="text-center text-muted small mt-4 mb-0">
+            Akkountingiz yo'qmi? <a href="{% url 'accounts:register' %}" class="fw-bold">Ro'yxatdan o'tish</a>
+        </p>
     </div>
-
-    <!-- Password maydoni -->
-    <div style="margin-bottom: 15px;">
-        {{ form.password.errors }}
-        {{ form.password }}
-    </div>
-
-    <button type="submit" class="box" style="cursor: pointer;">KIRISH</button>
-</form>
-
-</body>
-</html>
+</div>
+{% endblock %}
